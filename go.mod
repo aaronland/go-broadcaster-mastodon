@@ -3,7 +3,7 @@ module github.com/aaronland/go-broadcaster-mastodon
 go 1.19
 
 require (
-	github.com/aaronland/go-broadcaster v0.0.4
+	github.com/aaronland/go-broadcaster v0.0.5
 	github.com/aaronland/go-image-encode v0.0.0-20200215191655-047f61aedbfe
 	github.com/aaronland/go-mastodon-api v1.0.0
 	github.com/aaronland/go-uid v0.4.0
@@ -11,8 +11,6 @@ require (
 )
 
 require (
-	github.com/ChimeraCoder/anaconda v2.0.0+incompatible // indirect
-	github.com/ChimeraCoder/tokenbucket v0.0.0-20131201223612-c5a927568de7 // indirect
 	github.com/aaronland/go-aws-session v0.0.6 // indirect
 	github.com/aaronland/go-roster v1.0.0 // indirect
 	github.com/aaronland/go-string v1.0.0 // indirect
@@ -29,11 +27,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.13 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.10 // indirect
 	github.com/aws/smithy-go v1.12.0 // indirect
-	github.com/azr/backoff v0.0.0-20160115115103-53511d3c7330 // indirect
-	github.com/dustin/go-jsonpointer v0.0.0-20160814072949-ba0abeacc3dc // indirect
-	github.com/dustin/gojson v0.0.0-20160307161227-2e71ec9dd5ad // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
-	github.com/garyburd/go-oauth v0.0.0-20180319155456-bca2e7f09a17 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/wire v0.5.0 // indirect
