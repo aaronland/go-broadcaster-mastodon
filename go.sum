@@ -192,8 +192,8 @@ github.com/Shopify/toxiproxy v2.1.4+incompatible/go.mod h1:OXgGpZ6Cli1/URJOF1DMx
 github.com/VividCortex/gohistogram v1.0.0/go.mod h1:Pf5mBqqDxYaXu3hDrrU+w6nw50o/4+TcAqDqk/vUH7g=
 github.com/aaronland/go-aws-session v0.0.6 h1:Dp1Hvg7s1qM1xJ2byktEdB16i9t6wx6tMcZRpMoSwpo=
 github.com/aaronland/go-aws-session v0.0.6/go.mod h1:jflsOdd7QkD0ugdTEfU2UYpFjytP8AxiBxP++s10x88=
-github.com/aaronland/go-broadcaster v0.0.5 h1:ttkogleJFFQ0kj7kShybvSnMucZZ58GVmsqygrOvO4I=
-github.com/aaronland/go-broadcaster v0.0.5/go.mod h1:5hvDfw8G+JdHPvdFc9wOY2k1vyXdsrvCQ89H9QShAh4=
+github.com/aaronland/go-broadcaster v0.0.7 h1:5Mi2E/SsxAFCLooXuZc0buGx8b7K1ileTL8L6JtEbOw=
+github.com/aaronland/go-broadcaster v0.0.7/go.mod h1:5hvDfw8G+JdHPvdFc9wOY2k1vyXdsrvCQ89H9QShAh4=
 github.com/aaronland/go-image-encode v0.0.0-20200215191655-047f61aedbfe h1:28o4np7vSR9I0ezWJJbgyntSj1tuJfJWnkYh+t5HPGs=
 github.com/aaronland/go-image-encode v0.0.0-20200215191655-047f61aedbfe/go.mod h1:cYgNgNYMYq2pi85vYqoUVzXFwOOujIRULt7UbRBEnPU=
 github.com/aaronland/go-mastodon-api v1.0.0 h1:hKDdC8AV1J0dE0SO3Jf3vRY/b2m56PubATdlZ8jJTbQ=

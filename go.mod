@@ -3,7 +3,7 @@ module github.com/aaronland/go-broadcaster-mastodon
 go 1.19
 
 require (
-	github.com/aaronland/go-broadcaster v0.0.5
+	github.com/aaronland/go-broadcaster v0.0.7
 	github.com/aaronland/go-image-encode v0.0.0-20200215191655-047f61aedbfe
 	github.com/aaronland/go-mastodon-api v1.0.0
 	github.com/aaronland/go-uid v0.4.0

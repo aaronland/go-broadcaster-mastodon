@@ -1,6 +1,10 @@
 # go-broadcaster-mastodon
 
-Work in progress.
+Go package implementing the `aaronland/go-broadcaster` interfaces for broadcasting messages to Mastodon.
+
+## Documentation
+
+Documentation is incomplete at this time.
 
 ## See also
 
