@@ -2,9 +2,11 @@ package broadcaster
 
 import (
 	"context"
-	"github.com/aaronland/go-uid"
-	"log"
+	"fmt"
+	"log/slog"
 	"time"
+
+	"github.com/aaronland/go-uid"
 )
 
 func init() {
@@ -16,7 +18,6 @@ func init() {
 // to a `log.Logger` instance.
 type LogBroadcaster struct {
 	Broadcaster
-	logger *log.Logger
 }
 
 // NewLogBroadcaster returns a new `LogBroadcaster` configured by 'uri' which is expected to
@@ -24,15 +25,11 @@ type LogBroadcaster struct {
 //
 //	log://
 //
-// By default `LogBroadcaster` instances are configured to broadcast messages to a `log.Default`
-// instance. If you want to change that call the `SetLogger` method.
+// By default `LogBroadcaster` instances are configured to broadcast messages to a `log/slog.Default`
+// instance with an `INFO` level.
 func NewLogBroadcaster(ctx context.Context, uri string) (Broadcaster, error) {
 
-	logger := log.Default()
-
-	b := LogBroadcaster{
-		logger: logger,
-	}
+	b := LogBroadcaster{}
 	return &b, nil
 }
 
@@ -42,16 +39,13 @@ func NewLogBroadcaster(ctx context.Context, uri string) (Broadcaster, error) {
 // that the log message was broadcast.
 func (b *LogBroadcaster) BroadcastMessage(ctx context.Context, msg *Message) (uid.UID, error) {
 
-	b.logger.Printf("%s %s\n", msg.Title, msg.Body)
+	log_msg := fmt.Sprintf("%s %s", msg.Title, msg.Body)
+
+	logger := slog.Default()
+	logger.Info(log_msg)
 
 	now := time.Now()
 	ts := now.Unix()
 
 	return uid.NewInt64UID(ctx, ts)
-}
-
-// SetLoggers assigns 'logger' to 'b'.
-func (b *LogBroadcaster) SetLogger(ctx context.Context, logger *log.Logger) error {
-	b.logger = logger
-	return nil
 }

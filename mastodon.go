@@ -4,17 +4,18 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/aaronland/go-broadcaster"
-	"github.com/aaronland/go-image-encode"
-	"github.com/aaronland/go-mastodon-api/client"
-	"github.com/aaronland/go-mastodon-api/response"
-	"github.com/aaronland/go-uid"
-	"github.com/sfomuseum/runtimevar"
 	_ "image"
-	"log"
+	"log/slog"
 	"net/url"
 	"strconv"
 	"time"
+
+	"github.com/aaronland/go-broadcaster"
+	"github.com/aaronland/go-image-encode"
+	"github.com/aaronland/go-mastodon-api/v2/client"
+	"github.com/aaronland/go-mastodon-api/v2/response"
+	"github.com/aaronland/go-uid"
+	"github.com/sfomuseum/runtimevar"
 )
 
 func init() {
@@ -28,7 +29,6 @@ type MastodonBroadcaster struct {
 	testing         bool
 	dryrun          bool
 	encoder         encode.Encoder
-	logger          *log.Logger
 }
 
 func NewMastodonBroadcaster(ctx context.Context, uri string) (broadcaster.Broadcaster, error) {
@@ -97,14 +97,11 @@ func NewMastodonBroadcaster(ctx context.Context, uri string) (broadcaster.Broadc
 		dryrun = d
 	}
 
-	logger := log.Default()
-
 	br := &MastodonBroadcaster{
 		mastodon_client: cl,
 		testing:         testing,
 		dryrun:          dryrun,
 		encoder:         enc,
-		logger:          logger,
 	}
 
 	return br, nil
@@ -141,6 +138,7 @@ func (b *MastodonBroadcaster) BroadcastMessage(ctx context.Context, msg *broadca
 				args.Add("media_ids[]", "dryrun")
 			} else {
 
+				slog.Debug("Upload media for post")
 				rsp, err := b.mastodon_client.UploadMedia(ctx, r, nil)
 
 				if err != nil {
@@ -153,6 +151,7 @@ func (b *MastodonBroadcaster) BroadcastMessage(ctx context.Context, msg *broadca
 					return nil, fmt.Errorf("Failed to derive media ID from response, %w", err)
 				}
 
+				slog.Debug("Successfully uploaded media", "id", media_id)
 				args.Add("media_ids[]", media_id)
 			}
 		}
@@ -161,7 +160,7 @@ func (b *MastodonBroadcaster) BroadcastMessage(ctx context.Context, msg *broadca
 	var status_id string
 
 	if b.dryrun {
-		b.logger.Println(args)
+		slog.Info("Dryrun", "args", args)
 		status_id = "1"
 	} else {
 
@@ -180,12 +179,7 @@ func (b *MastodonBroadcaster) BroadcastMessage(ctx context.Context, msg *broadca
 		status_id = id
 	}
 
-	b.logger.Printf("mastodon post %s", status_id)
+	slog.Info("Mastodon post", "status ID", status_id)
 
 	return uid.NewStringUID(ctx, status_id)
-}
-
-func (b *MastodonBroadcaster) SetLogger(ctx context.Context, logger *log.Logger) error {
-	b.logger = logger
-	return nil
 }

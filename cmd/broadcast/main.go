@@ -2,19 +2,22 @@ package main
 
 import (
 	"context"
-	"github.com/aaronland/go-broadcaster/app/broadcast"
-	_ "github.com/aaronland/go-broadcaster-mastodon"	
 	"log"
+
+	_ "image/jpeg"
+	_ "image/png"
+	_ "image/gif"
+	
+	_ "github.com/aaronland/go-broadcaster-mastodon"
+	"github.com/aaronland/go-broadcaster/app/broadcast"
 )
 
 func main() {
 
 	ctx := context.Background()
-	logger := log.Default()
-
-	err := broadcast.Run(ctx, logger)
+	err := broadcast.Run(ctx)
 
 	if err != nil {
-		logger.Fatalf("Failed to run broadcast application, %v", err)
+		log.Fatalf("Failed to run broadcast application, %v", err)
 	}
 }
