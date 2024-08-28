@@ -21,7 +21,11 @@ import (
 
 func init() {
 	ctx := context.Background()
-	broadcaster.RegisterBroadcaster(ctx, "mastodon", NewMastodonBroadcaster)
+	err := broadcaster.RegisterBroadcaster(ctx, "mastodon", NewMastodonBroadcaster)
+
+	if err != nil {
+		panic(err)
+	}
 }
 
 type MastodonBroadcaster struct {
@@ -66,7 +70,7 @@ func NewMastodonBroadcaster(ctx context.Context, uri string) (broadcaster.Broadc
 	testing := false
 	dryrun := false
 	quality := 100
-	
+
 	if q.Has("testing") {
 
 		t, err := strconv.ParseBool(q.Get("testing"))
@@ -87,6 +91,17 @@ func NewMastodonBroadcaster(ctx context.Context, uri string) (broadcaster.Broadc
 		}
 
 		dryrun = d
+	}
+
+	if q.Has("quality") {
+
+		v, err := strconv.Atoi(q.Get("quality"))
+
+		if err != nil {
+			return nil, fmt.Errorf("Failed to parse ?quality= parameter, %w", err)
+		}
+
+		quality = v
 	}
 
 	br := &MastodonBroadcaster{
@@ -184,7 +199,6 @@ func (b *MastodonBroadcaster) BroadcastMessage(ctx context.Context, msg *broadca
 		status_id = id
 	}
 
-	slog.Info("Mastodon post", "status ID", status_id)
-
+	slog.Info("Mastodon post successful", "status ID", status_id)
 	return uid.NewStringUID(ctx, status_id)
 }
