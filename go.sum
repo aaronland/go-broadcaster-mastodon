@@ -18,11 +18,8 @@ github.com/aaronland/go-aws-auth v1.3.1 h1:HpG1E6TqNqB9Pz5W2t1OrJR02yU8oMj5UYEeA
 github.com/aaronland/go-aws-auth v1.3.1/go.mod h1:cuSCDeLTDeS8MDRKZbWUnLPad/EmIpGzhD1R5vD/1JI=
 github.com/aaronland/go-broadcaster v1.0.0 h1:qekcxrVPcyphthB6nLKN53oARJvO5q0HTKaTINxmSrA=
 github.com/aaronland/go-broadcaster v1.0.0/go.mod h1:pqba6UZpdSud9L6LEE2WPWtN7lSD6qJTdE1sG4lb0KA=
-github.com/aaronland/go-image-encode v0.0.0-20230505060854-4f82af2fea0c h1:qc2D06HbEnZzvGSYm7lfY+uja4gXvW+OwfdHXE2pVtg=
-github.com/aaronland/go-image-encode v0.0.0-20230505060854-4f82af2fea0c/go.mod h1:cYgNgNYMYq2pi85vYqoUVzXFwOOujIRULt7UbRBEnPU=
 github.com/aaronland/go-mastodon-api/v2 v2.0.0 h1:SM2gBKu0EXA20xsao/423KuscAhKUvNYIVci1M6DWAs=
 github.com/aaronland/go-mastodon-api/v2 v2.0.0/go.mod h1:q8tmT83Q33shj2o5NsgaKHSUML+LREzOQ7e9eO8yuew=
-github.com/aaronland/go-roster v0.0.1/go.mod h1:AcovpxlG1XxJxX2Fjqlm63fEIBhCjEIBV4lP87FZDmI=
 github.com/aaronland/go-roster v1.0.0 h1:FRDGrTqsYySKjWnAhbBGXyeGlI/o5/t9FZYCbUmyQtI=
 github.com/aaronland/go-roster v1.0.0/go.mod h1:KIsYZgrJlAsyb9LsXSCvlqvbcCBVjCSqcQiZx42i9ro=
 github.com/aaronland/go-string v1.0.0 h1:fPHmC1i9JhGzgi4qdCSXKc4xTCaLLe0uvlJMu9dHhco=

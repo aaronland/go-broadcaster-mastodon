@@ -4,7 +4,6 @@ go 1.23
 
 require (
 	github.com/aaronland/go-broadcaster v1.0.0
-	github.com/aaronland/go-image-encode v0.0.0-20230505060854-4f82af2fea0c
 	github.com/aaronland/go-mastodon-api/v2 v2.0.0
 	github.com/aaronland/go-uid v0.4.0
 	github.com/sfomuseum/runtimevar v1.2.0

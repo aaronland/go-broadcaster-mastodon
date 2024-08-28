@@ -4,10 +4,10 @@ import (
 	"context"
 	"log"
 
+	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
-	_ "image/gif"
-	
+
 	_ "github.com/aaronland/go-broadcaster-mastodon"
 	"github.com/aaronland/go-broadcaster/app/broadcast"
 )
