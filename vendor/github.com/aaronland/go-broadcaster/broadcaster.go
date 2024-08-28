@@ -3,21 +3,19 @@ package broadcaster
 import (
 	"context"
 	"fmt"
-	"github.com/aaronland/go-roster"
-	"github.com/aaronland/go-uid"
 	"image"
-	"log"
 	"net/url"
 	"sort"
 	"strings"
+
+	"github.com/aaronland/go-roster"
+	"github.com/aaronland/go-uid"
 )
 
 // Broadcaster provides a minimalist interface for "broadcasting" messages to an arbitrary service or target.
 type Broadcaster interface {
 	// BroadcastMessage "broadcasts" a `Message` struct.
 	BroadcastMessage(context.Context, *Message) (uid.UID, error)
-	// SetLogger assigns a specific `log.Logger` instance to be used for logging messages.
-	SetLogger(context.Context, *log.Logger) error
 }
 
 // Message defines a struct containing properties to "broadcast". The semantics of these

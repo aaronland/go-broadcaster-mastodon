@@ -8,7 +8,7 @@ Minimalist and opinionated package providing interfaces for "broadcasting" messa
 
 ## Motivation
 
-This package provides minimalist and opionated interfaces for "broadcasting" simple messages with zero or more images.
+This package provides minimalist and opinionated interfaces for "broadcasting" simple messages with zero or more images.
 
 A message consists of an optional title and body as well as zero or more images. How those elements are processed is left to service or target -specific implementations of the `Broadcaster` interfaces.
 
@@ -16,7 +16,7 @@ That's all it does and doesn't try to account for any other, or more complicated
 
 ## This should still be considered "in flux"
 
-Although the "skeleton" of this package and its interfaces is complete some details may still change.
+Although the "skeleton" of this package and its interfaces is complete some details may still change. For example, it is expected that the `Broadcaster` interface will be updated to include a `Close` method shortly.
 
 ## Example
 
@@ -28,17 +28,15 @@ package broadcast
 import (
 	"context"
 	"fmt"
+	
 	"github.com/aaronland/go-broadcaster"
-	"log"
 )
 
 func main() {
 
 	ctx := context.Background()     
-	logger := log.Default()
 
 	br, _ := broadcaster.NewBroadcaster(ctx, "log://")
-	br.SetLogger(ctx, logger)
 
 	msg := &broadcaster.Message{
 		Title: "This is the title",
@@ -72,10 +70,8 @@ func init() {
 }
 
 // LogBroadcaster implements the `Broadcaster` interface to broadcast messages
-// to a `log.Logger` instance.
 type LogBroadcaster struct {
 	Broadcaster
-	logger *log.Logger
 }
 
 // NewLogBroadcaster returns a new `LogBroadcaster` configured by 'uri' which is expected to
@@ -89,9 +85,7 @@ func NewLogBroadcaster(ctx context.Context, uri string) (Broadcaster, error) {
 	
 	logger := log.Default()
 	
-	b := LogBroadcaster{
-		logger: logger,
-	}
+	b := LogBroadcaster{}
 	return &b, nil
 }
 
@@ -100,19 +94,16 @@ func NewLogBroadcaster(ctx context.Context, uri string) (Broadcaster, error) {
 // to their ascii interpretations but today it does not. It returns the value of the Unix timestamp
 // that the log message was broadcast.
 func (b *LogBroadcaster) BroadcastMessage(ctx context.Context, msg *Message) (uid.UID, error) {
-	
-	b.logger.Printf("%s %s\n", msg.Title, msg.Body)
+
+	log_msg := fmt.Sprintf("%s %s", msg.Title, msg.Body)
+
+	logger := slog.Default()	
+	logger.Info(log_msg)
 
 	now := time.Now()
 	ts := now.Unix()
 
 	return uid.NewInt64UID(ctx, ts)
-}
-
-// SetLoggers assigns 'logger' to 'b'.
-func (b *LogBroadcaster) SetLogger(ctx context.Context, logger *log.Logger) error {
-	b.logger = logger
-	return nil
 }
 ```
 
@@ -151,9 +142,17 @@ NullUID# Int64UID#1667925887
 
 ## Other implementations
 
+### flickr://
+
+* https://github.com/aaronland/go-broadcaster-flickr
+
 ### mastodon://
 
 * https://github.com/aaronland/go-broadcaster-mastodon
+
+### slack://
+
+* https://github.com/aaronland/go-broadcaster-slack
 
 ### twitter://
 

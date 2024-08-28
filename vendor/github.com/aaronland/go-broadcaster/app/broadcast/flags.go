@@ -18,6 +18,8 @@ var body string
 // Zero or more paths to images to include with the message to broadcast.
 var image_paths multi.MultiString
 
+var verbose bool
+
 func DefaultFlagSet() *flag.FlagSet {
 
 	fs := flagset.NewFlagSet("broadcast")
@@ -28,6 +30,7 @@ func DefaultFlagSet() *flag.FlagSet {
 	fs.StringVar(&body, "body", "", "The body of the message to broadcast.")
 
 	fs.Var(&image_paths, "image", "Zero or more paths to images to include with the message to broadcast.")
+	fs.BoolVar(&verbose, "verbose", false, "Enable verbose (debug) logging.")
 
 	return fs
 }

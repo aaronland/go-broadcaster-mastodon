@@ -5,29 +5,33 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"image"
+	"log/slog"
+	"os"
+
 	"github.com/aaronland/go-broadcaster"
 	"github.com/sfomuseum/go-flags/flagset"
-	"image"
-	"log"
-	"os"
 )
 
-func Run(ctx context.Context, logger *log.Logger) error {
+func Run(ctx context.Context) error {
 	fs := DefaultFlagSet()
-	return RunWithFlagSet(ctx, fs, logger)
+	return RunWithFlagSet(ctx, fs)
 }
 
-func RunWithFlagSet(ctx context.Context, fs *flag.FlagSet, logger *log.Logger) error {
+func RunWithFlagSet(ctx context.Context, fs *flag.FlagSet) error {
 
 	flagset.Parse(fs)
+
+	if verbose {
+		slog.SetLogLoggerLevel(slog.LevelDebug)
+		slog.Debug("Verbose logging enabled")
+	}
 
 	br, err := broadcaster.NewMultiBroadcasterFromURIs(ctx, broadcaster_uris...)
 
 	if err != nil {
 		return fmt.Errorf("Failed to create broadcaster, %w", err)
 	}
-
-	br.SetLogger(ctx, logger)
 
 	msg := &broadcaster.Message{
 		Title: title,

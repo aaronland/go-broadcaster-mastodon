@@ -1,25 +1,31 @@
 package mastodon
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/aaronland/go-broadcaster"
-	"github.com/aaronland/go-image-encode"
-	"github.com/aaronland/go-mastodon-api/client"
-	"github.com/aaronland/go-mastodon-api/response"
-	"github.com/aaronland/go-uid"
-	"github.com/sfomuseum/runtimevar"
 	_ "image"
-	"log"
+	"image/jpeg"
+	"log/slog"
 	"net/url"
 	"strconv"
 	"time"
+
+	"github.com/aaronland/go-broadcaster"
+	"github.com/aaronland/go-mastodon-api/v2/client"
+	"github.com/aaronland/go-mastodon-api/v2/response"
+	"github.com/aaronland/go-uid"
+	"github.com/sfomuseum/runtimevar"
 )
 
 func init() {
 	ctx := context.Background()
-	broadcaster.RegisterBroadcaster(ctx, "mastodon", NewMastodonBroadcaster)
+	err := broadcaster.RegisterBroadcaster(ctx, "mastodon", NewMastodonBroadcaster)
+
+	if err != nil {
+		panic(err)
+	}
 }
 
 type MastodonBroadcaster struct {
@@ -27,8 +33,7 @@ type MastodonBroadcaster struct {
 	mastodon_client client.Client
 	testing         bool
 	dryrun          bool
-	encoder         encode.Encoder
-	logger          *log.Logger
+	quality         int
 }
 
 func NewMastodonBroadcaster(ctx context.Context, uri string) (broadcaster.Broadcaster, error) {
@@ -62,20 +67,13 @@ func NewMastodonBroadcaster(ctx context.Context, uri string) (broadcaster.Broadc
 		return nil, fmt.Errorf("Failed to create new Mastodon client, %w", err)
 	}
 
-	enc, err := encode.NewEncoder(ctx, "png://")
-
-	if err != nil {
-		return nil, fmt.Errorf("Failed to create image encoder, %w", err)
-	}
-
 	testing := false
 	dryrun := false
+	quality := 100
 
-	str_testing := q.Get("testing")
+	if q.Has("testing") {
 
-	if str_testing != "" {
-
-		t, err := strconv.ParseBool(str_testing)
+		t, err := strconv.ParseBool(q.Get("testing"))
 
 		if err != nil {
 			return nil, fmt.Errorf("Failed to parse ?testing= parameter, %w", err)
@@ -84,11 +82,9 @@ func NewMastodonBroadcaster(ctx context.Context, uri string) (broadcaster.Broadc
 		testing = t
 	}
 
-	str_dryrun := q.Get("dryrun")
+	if q.Has("dryrun") {
 
-	if str_dryrun != "" {
-
-		d, err := strconv.ParseBool(str_dryrun)
+		d, err := strconv.ParseBool(q.Get("dryrun"))
 
 		if err != nil {
 			return nil, fmt.Errorf("Failed to parse ?dryrun= parameter, %w", err)
@@ -97,14 +93,22 @@ func NewMastodonBroadcaster(ctx context.Context, uri string) (broadcaster.Broadc
 		dryrun = d
 	}
 
-	logger := log.Default()
+	if q.Has("quality") {
+
+		v, err := strconv.Atoi(q.Get("quality"))
+
+		if err != nil {
+			return nil, fmt.Errorf("Failed to parse ?quality= parameter, %w", err)
+		}
+
+		quality = v
+	}
 
 	br := &MastodonBroadcaster{
 		mastodon_client: cl,
 		testing:         testing,
 		dryrun:          dryrun,
-		encoder:         enc,
-		logger:          logger,
+		quality:         quality,
 	}
 
 	return br, nil
@@ -129,19 +133,33 @@ func (b *MastodonBroadcaster) BroadcastMessage(ctx context.Context, msg *broadca
 
 			// but what if GIF...
 
-			r := new(bytes.Buffer)
+			var buf bytes.Buffer
+			wr := bufio.NewWriter(&buf)
 
-			err := b.encoder.Encode(ctx, im, r)
+			// Apparently it's not possible to upload PNG files anymore? That doesn't
+			// make any sense but when I try to upload them the Mastodon API returns a
+			// 422 Unprocessable Content error
+
+			jpeg_opts := &jpeg.Options{
+				Quality: b.quality,
+			}
+
+			err := jpeg.Encode(wr, im, jpeg_opts)
 
 			if err != nil {
 				return nil, fmt.Errorf("Failed to encode image, %w", err)
 			}
 
+			wr.Flush()
+
 			if b.dryrun {
 				args.Add("media_ids[]", "dryrun")
 			} else {
 
-				rsp, err := b.mastodon_client.UploadMedia(ctx, r, nil)
+				br := bytes.NewReader(buf.Bytes())
+
+				slog.Debug("Upload media for post")
+				rsp, err := b.mastodon_client.UploadMedia(ctx, br, nil)
 
 				if err != nil {
 					return nil, fmt.Errorf("Failed to upload image, %w", err)
@@ -153,6 +171,7 @@ func (b *MastodonBroadcaster) BroadcastMessage(ctx context.Context, msg *broadca
 					return nil, fmt.Errorf("Failed to derive media ID from response, %w", err)
 				}
 
+				slog.Debug("Successfully uploaded media", "id", media_id)
 				args.Add("media_ids[]", media_id)
 			}
 		}
@@ -161,7 +180,7 @@ func (b *MastodonBroadcaster) BroadcastMessage(ctx context.Context, msg *broadca
 	var status_id string
 
 	if b.dryrun {
-		b.logger.Println(args)
+		slog.Info("Dryrun", "args", args)
 		status_id = "1"
 	} else {
 
@@ -180,12 +199,6 @@ func (b *MastodonBroadcaster) BroadcastMessage(ctx context.Context, msg *broadca
 		status_id = id
 	}
 
-	b.logger.Printf("mastodon post %s", status_id)
-
+	slog.Info("Mastodon post successful", "status ID", status_id)
 	return uid.NewStringUID(ctx, status_id)
-}
-
-func (b *MastodonBroadcaster) SetLogger(ctx context.Context, logger *log.Logger) error {
-	b.logger = logger
-	return nil
 }
